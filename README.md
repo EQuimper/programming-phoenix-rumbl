@@ -1,3 +1,7 @@
+# Learning process
+
+- A repositorie is an API for holding things.
+
 # Rumbl
 
 To start your Phoenix app:
