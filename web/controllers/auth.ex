@@ -1,6 +1,9 @@
 defmodule Rumbl.Auth do
   import Plug.Conn
+  import Phoenix.Controller
   import Comeonin.Bcrypt, only: [checkpw: 2, dummy_checkpw: 0]
+
+  alias Rumbl.Router.Helpers
 
   def init(opts) do
     Keyword.fetch!(opts, :repo)
@@ -15,9 +18,9 @@ defmodule Rumbl.Auth do
 
   def login(conn, user) do
     conn
-      |> assign(:current_user, user)
-      |> put_session(:user_id, user.id)
-      |> configure_session(renew: true)
+    |> assign(:current_user, user)
+    |> put_session(:user_id, user.id)
+    |> configure_session(renew: true)
   end
 
   def login_by_username_and_pass(conn, username, given_pass, opts) do
@@ -38,5 +41,19 @@ defmodule Rumbl.Auth do
   def logout(conn) do
     # drop the whole session at the end of the request
     configure_session(conn, drop: true)
+  end
+
+  def authenticate_user(conn, _opts) do
+    # if we have a user we do nothing more
+    if conn.assigns.current_user do
+      conn
+    # if not we show a flash message and we redirect to the application root
+    # halt is use for stop any downstream transformations
+    else
+      conn
+      |> put_flash(:error, "You must be logged in to access that page")
+      |> redirect(to: Helpers.page_path(conn, :index))
+      |> halt()
+    end
   end
 end

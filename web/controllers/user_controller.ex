@@ -1,7 +1,7 @@
 defmodule Rumbl.UserController do
   use Rumbl.Web, :controller
 
-  plug :authenticate when action in [:index, :show]
+  plug :authenticate_user when action in [:index, :show]
 
   alias Rumbl.User
   alias Rumbl.Auth
@@ -26,25 +26,11 @@ defmodule Rumbl.UserController do
     case Repo.insert(changeset) do
       {:ok, user} ->
         conn
-          |> Auth.login(user)
-          |> put_flash(:info, "#{user.name} created!")
-          |> redirect(to: user_path(conn, :index))
+        |> Auth.login(user)
+        |> put_flash(:info, "#{user.name} created!")
+        |> redirect(to: user_path(conn, :index))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
-    end
-  end
-
-  defp authenticate(conn, _opts) do
-    # if we have a user we do nothing more
-    if conn.assigns.current_user do
-      conn
-    # if not we show a flash message and we redirect to the application root
-    # halt is use for stop any downstream transformations
-    else
-      conn
-        |> put_flash(:error, "You must be logged in to access that page")
-        |> redirect(to: page_path(conn, :index))
-        |> halt()
     end
   end
 end
