@@ -24,7 +24,7 @@
             <li><%= link "Log In", to: session_path(@conn, :new) %></li>
           <% end %>
         </ol>
-        <span class="logo"></span>
+        <a href="<%= page_path(@conn, :index) %>" class="logo"></a>
       </header>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
