@@ -13,6 +13,20 @@
 // to also remove its path from "config.paths.watched".
 import "phoenix_html"
 
+import Player from './player';
+
+const video = document.getElementById('video');
+
+console.log('====================================');
+console.log(video);
+console.log('====================================');
+
+if (video) {
+  Player.init(video.id, video.getAttribute('data-player-id'), () => {
+    console.log('player ready!');
+  })
+}
+
 // Import local files
 //
 // Local files can be imported directly using relative

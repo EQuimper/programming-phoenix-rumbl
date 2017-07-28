@@ -1,0 +1,35 @@
+const Player = {
+  player: null,
+  init(domId, playerId, onReady) {
+    console.log('====================================');
+    console.log({ domId, playerId });
+    console.log('====================================');
+    window.onYouTubeIframeAPIReady = () => {
+      this.onIframeReady(domId, playerId, onReady);
+    }
+
+    const youtubeScriptTag = document.createElement('script');
+    youtubeScriptTag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(youtubeScriptTag);
+  },
+  onIframeReady(domId, playerId, onReady) {
+    this.player = new YT.Player(domId, {
+      height: 360,
+      width: 420,
+      videoId: playerId,
+      events: {
+        onReady: e => onReady(e),
+        onStateChange: e => this.onPlayerStateChange(e)
+      }
+    });
+  },
+  onPlayerStateChange(e) {},
+  getCurrentTime() {
+    return Math.floor(this.player.getCurrentTime() * 1000)
+  },
+  seekTo(millsec) {
+    return this.player.seekTo(millsec / 1000)
+  }
+}
+
+export default Player;

@@ -19,7 +19,7 @@ defmodule Rumbl.AuthTest do
 
   test "authenticate_user continues when the current_user exists", %{conn: conn} do
     conn =
-      conn()
+      conn
       |> assign(:current_user, %User{})
       |> Auth.authenticate_user([])
 
