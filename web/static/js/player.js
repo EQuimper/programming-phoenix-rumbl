@@ -1,9 +1,6 @@
 const Player = {
   player: null,
   init(domId, playerId, onReady) {
-    console.log('====================================');
-    console.log({ domId, playerId });
-    console.log('====================================');
     window.onYouTubeIframeAPIReady = () => {
       this.onIframeReady(domId, playerId, onReady);
     }
