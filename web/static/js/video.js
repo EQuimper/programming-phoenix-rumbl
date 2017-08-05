@@ -2,7 +2,9 @@ import Player from './player';
 
 const Video = {
   init(socket, el) {
-    if (!el) { return false; }
+    if (!el) {
+      return false;
+    }
 
     const playerId = el.getAttribute('data-player-id');
     const videoId = el.getAttribute('data-id');
@@ -19,28 +21,32 @@ const Video = {
 
     postButton.addEventListener('click', e => {
       const payload = { body: msgInput.value, at: Player.getCurrentTime() };
-      vidChannel.push('new_annotation', payload)
+      vidChannel
+        .push('new_annotation', payload)
         .receive('error', e => console.log(e));
       msgInput.value = '';
     });
 
     vidChannel.on('new_annotation', res => {
-      vidChannel.params.last_seen_id = res.id
+      vidChannel.params.last_seen_id = res.id;
       this.renderAnnotation(msgContainer, res);
     });
 
     msgContainer.addEventListener('click', e => {
       e.preventDefault();
-      const seconds = e.target.getAttribute('data-seek') || e.target.parentNode.getAttribute('data-seek')
+      const seconds =
+        e.target.getAttribute('data-seek') ||
+        e.target.parentNode.getAttribute('data-seek');
 
       if (!seconds) {
         return;
       }
 
       Player.seekTo(seconds);
-    })
+    });
 
-    vidChannel.join()
+    vidChannel
+      .join()
       .receive('ok', ({ annotations }) => {
         const ids = annotations.map(ann => ann.id);
         if (ids.length > 0) {
@@ -62,7 +68,7 @@ const Video = {
         [${this.formatTime(at)}]
         <b>${this.esc(user.username)}</b>: ${this.esc(body)}
       </a>
-    `
+    `;
 
     msgContainer.appendChild(tpl);
     msgContainer.scrollTop = msgContainer.scrollHeight;
@@ -70,8 +76,8 @@ const Video = {
   scheduleMessages(msgContainer, annotations) {
     setTimeout(() => {
       const ctime = Player.getCurrentTime();
-      const remaining = this.renderAtTime(annotations, ctime, msgContainer)
-      this.scheduleMessages(msgContainer, remaining)
+      const remaining = this.renderAtTime(annotations, ctime, msgContainer);
+      this.scheduleMessages(msgContainer, remaining);
     }, 1000);
   },
   renderAtTime(annotations, seconds, msgContainer) {
@@ -81,13 +87,13 @@ const Video = {
       }
       this.renderAnnotation(msgContainer, ann);
       return false;
-    })
+    });
   },
   formatTime(at) {
     const date = new Date(null);
     date.setSeconds(at / 1000);
     return date.toISOString().substr(14, 5);
-  }
-}
+  },
+};
 
 export default Video;
